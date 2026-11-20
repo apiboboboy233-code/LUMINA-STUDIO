@@ -18,7 +18,9 @@ bool equal(RGB x, RGB y) { return x.r == y.r && x.g == y.g && x.b == y.b; }
 int main() {
   const RGB primary{230, 42, 17}, secondary{15, 121, 243};
   static_assert(Fx::effectCount == 16 && Fx::Solid == 0 && Fx::Gradient == 1, "mode contract");
+  static_assert(!Fx::isAnimated(Fx::effectCount), "Invalid mode is not animated");
   for (unsigned mode = 0; mode < Fx::effectCount; ++mode) {
+    assert(Fx::isAnimated(mode) == (mode > Fx::Gradient));
     const auto &info = Fx::metadata[mode];
     std::printf("%s\t%s\t%s\t%s\n", info.id, info.name, info.category, info.description);
     auto defaults = Fx::defaults(mode);

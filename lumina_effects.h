@@ -10,6 +10,7 @@ enum Mode : uint8_t {
   Scanner, ColorWipe, TheaterChase, Twinkle, Sparkle, Fire, RunningLights, Ocean,
   effectCount
 };
+constexpr bool isAnimated(unsigned mode) { return mode > Gradient && mode < effectCount; }
 constexpr unsigned maxParams = 3;
 struct Params { uint16_t values[maxParams]{}; };
 struct ParamInfo { const char *id, *name; uint16_t min, max, defaultValue; };

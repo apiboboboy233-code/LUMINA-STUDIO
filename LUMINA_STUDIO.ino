@@ -86,9 +86,9 @@ unsigned completedRawCount = 0, pendingRawCount = 0;
 
 unsigned activeEffect() {
   if (studio.color.gradientMode) return Fx::Gradient;
-  return effectSettings.mode >= Fx::Blink ? effectSettings.mode : unsigned(Fx::Solid);
+  return Fx::isAnimated(effectSettings.mode) ? effectSettings.mode : unsigned(Fx::Solid);
 }
-bool effectRunning() { return ready && light.power && !testMode && activeEffect() >= Fx::Blink; }
+bool effectRunning() { return ready && light.power && !testMode && Fx::isAnimated(activeEffect()); }
 void markEffect() { effectSaveAt = esp_timer_get_time() + 5000000; }
 void selectStudioGradient() {
   if (effectSettings.mode != Fx::Solid) {
@@ -165,7 +165,7 @@ void initLighting() {
   }
   loadStudio();
   loadEffect();
-  if (effectSettings.mode >= Fx::Blink) studio.color.gradientMode = false;
+  if (Fx::isAnimated(effectSettings.mode)) studio.color.gradientMode = false;
   if (!rmtInit(LUMINA_LED_GPIO, RMT_TX_MODE, RMT_MEM_NUM_BLOCKS_2, 20000000)) {
     ledError = "RMT initialization failed";
     return;

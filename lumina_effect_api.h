@@ -219,7 +219,7 @@ esp_err_t postEffect(httpd_req_t *r) {
       studio.color.gradientMode = false;
       selectStudioGradient();
     }
-    if (edit.mode >= Fx::Blink && studio.color.gradientMode) {
+    if (Fx::isAnimated(edit.mode) && studio.color.gradientMode) {
       studio.color.gradientMode = false;
       markStudio();
     }
