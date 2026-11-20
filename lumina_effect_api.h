@@ -24,9 +24,9 @@ bool effectObject(const char *&p, EffectSettings &s) {
   for (unsigned i = 0; i < 2; ++i) {
     if (i && !take(p, ',')) break;
     char key[16];
-    if (!word(p, key, sizeof(key)) || !take(p, ':')) return false;
+    if (!readJsonString(p, key, sizeof(key)) || !take(p, ':')) return false;
     if (!strcmp(key, "effect")) {
-      if (seenEffect || !word(p, effectID, sizeof(effectID))) return false;
+      if (seenEffect || !readJsonString(p, effectID, sizeof(effectID))) return false;
       seenEffect = true;
     } else if (!strcmp(key, "transition_ms")) {
       if (seenTrans || !number(p, transMs, maxEffectTransition)) return false;
@@ -51,7 +51,7 @@ bool parametersObject(const char *&p, EffectSettings &s, bool &seenFavorite, cha
   unsigned paramsSeen = 0;
   while (true) {
     char key[16];
-    if (!word(p, key, sizeof(key)) || !take(p, ':')) return false;
+    if (!readJsonString(p, key, sizeof(key)) || !take(p, ':')) return false;
     if (!strcmp(key, "speed")) {
       unsigned v; if (!number(p, v, 10000) || (paramsSeen & 1)) return false;
       params.values[0] = v; paramsSeen |= 1;
@@ -69,8 +69,8 @@ bool parametersObject(const char *&p, EffectSettings &s, bool &seenFavorite, cha
     } else if (!strcmp(key, "favorite")) {
       if (seenFavorite || !take(p, '{')) return false;
       char fkey[12];
-      if (!word(p, fkey, sizeof(fkey)) || strcmp(fkey, "effect") || !take(p, ':') ||
-          !word(p, favID, 33) || !take(p, ',') || !word(p, fkey, sizeof(fkey)) ||
+      if (!readJsonString(p, fkey, sizeof(fkey)) || strcmp(fkey, "effect") || !take(p, ':') ||
+          !readJsonString(p, favID, 33) || !take(p, ',') || !readJsonString(p, fkey, sizeof(fkey)) ||
           strcmp(fkey, "enabled") || !take(p, ':')) return false;
       skipSpace(p);
       bool enabled = false;

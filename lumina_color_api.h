@@ -1,22 +1,10 @@
 #pragma once
 
-bool skipSpace(const char *&p) { while (*p && (*p==' '||*p=='\t'||*p=='\r'||*p=='\n')) ++p; return true; }
-bool take(const char *&p,char c) { skipSpace(p); if (*p!=c) return false; ++p; return true; }
 bool takeQuote(const char *&p) { return take(p,'"'); }
 bool takeMember(const char *&p) { return takeQuote(p); }
-bool word(const char *&p,char *out,size_t cap) {
-  if (!takeQuote(p)) return false;
-  size_t n=0;
-  while (*p && *p!='"') {
-    if (n+1>=cap || *p<32 || *p=='\\') return false;
-    out[n++]=*p++;
-  }
-  out[n]=0;
-  return *p && *p++=='"';
-}
 bool keyword(const char *&p,const char *expected) {
   char buf[24];
-  if (!word(p,buf,sizeof(buf))||strcmp(buf,expected)) return false;
+  if (!readJsonString(p,buf,sizeof(buf))||strcmp(buf,expected)) return false;
   return true;
 }
 bool studioNumber(const char *&p,unsigned &v) {
@@ -67,7 +55,7 @@ bool stopObject(const char *&p,Stop &s) {
   for (unsigned i=0;i<3;++i) {
     if (i&&!take(p,',')) return false;
     char key[16];
-    if (!word(p,key,sizeof(key))||!take(p,':')) return false;
+    if (!readJsonString(p,key,sizeof(key))||!take(p,':')) return false;
     if (!strcmp(key,"color")) {
       if (foundColor||!rgbObject(p,s.color)) return false;
       foundColor=true;
@@ -89,7 +77,7 @@ bool gradientObject(const char *&p,Gradient &g) {
   while (members<6) {
     if (members&&!take(p,',')) break;
     char key[16];
-    if (!word(p,key,sizeof(key))||!take(p,':')) return false;
+    if (!readJsonString(p,key,sizeof(key))||!take(p,':')) return false;
     if (!strcmp(key,"stops")) {
       if (!take(p,'[')) return false;
       for (unsigned i=0;i<maxStops;++i) {
@@ -100,7 +88,7 @@ bool gradientObject(const char *&p,Gradient &g) {
       if (!take(p,']')) return false;
     } else if (!strcmp(key,"interpolation")) {
       char val[12];
-      if (!word(p,val,sizeof(val))) return false;
+      if (!readJsonString(p,val,sizeof(val))) return false;
       const int idx=lookup(val,interpolations,4);
       if (idx<0) return false;
       g.interpolation=unsigned(idx);
@@ -123,19 +111,19 @@ bool transitionObject(const char *&p,Transition &t) {
   while (members<3) {
     if (members&&!take(p,',')) break;
     char key[12];
-    if (!word(p,key,sizeof(key))||!take(p,':')) return false;
+    if (!readJsonString(p,key,sizeof(key))||!take(p,':')) return false;
     if (!strcmp(key,"duration")) {
       unsigned v; if (!studioNumber(p,v)||v>10000) return false;
       t.duration=v;
     } else if (!strcmp(key,"style")) {
       char val[12];
-      if (!word(p,val,sizeof(val))) return false;
+      if (!readJsonString(p,val,sizeof(val))) return false;
       const int idx=lookup(val,styles,4);
       if (idx<0) return false;
       t.style=unsigned(idx);
     } else if (!strcmp(key,"curve")) {
       char val[12];
-      if (!word(p,val,sizeof(val))) return false;
+      if (!readJsonString(p,val,sizeof(val))) return false;
       const int idx=lookup(val,curves,4);
       if (idx<0) return false;
       t.curve=unsigned(idx);
@@ -149,11 +137,11 @@ bool paletteObject(const char *&p,Palette &pal) {
   pal={};
   while (true) {
     char key[16];
-    if (!word(p,key,sizeof(key))||!take(p,':')) return false;
-    if (!strcmp(key,"id")) { if (!word(p,pal.id,sizeof(pal.id))) return false; }
-    else if (!strcmp(key,"name")) { if (!word(p,pal.name,sizeof(pal.name))) return false; }
-    else if (!strcmp(key,"description")) { if (!word(p,pal.description,sizeof(pal.description))) return false; }
-    else if (!strcmp(key,"category")) { if (!word(p,pal.category,sizeof(pal.category))) return false; }
+    if (!readJsonString(p,key,sizeof(key))||!take(p,':')) return false;
+    if (!strcmp(key,"id")) { if (!readJsonString(p,pal.id,sizeof(pal.id))) return false; }
+    else if (!strcmp(key,"name")) { if (!readJsonString(p,pal.name,sizeof(pal.name))) return false; }
+    else if (!strcmp(key,"description")) { if (!readJsonString(p,pal.description,sizeof(pal.description))) return false; }
+    else if (!strcmp(key,"category")) { if (!readJsonString(p,pal.category,sizeof(pal.category))) return false; }
     else if (!strcmp(key,"favorite")) { if (!boolean(p,pal.favorite)) return false; }
     else if (!strcmp(key,"created")) {
       skipSpace(p);
@@ -240,7 +228,7 @@ esp_err_t postColor(httpd_req_t *r) {
   Transition trans={};
   while (true) {
     char key[16];
-    if (!word(p,key,sizeof(key))||!take(p,':')) return failure(r,"400 Bad Request","Invalid key");
+    if (!readJsonString(p,key,sizeof(key))||!take(p,':')) return failure(r,"400 Bad Request","Invalid key");
     if (!strcmp(key,"r")||!strcmp(key,"g")||!strcmp(key,"b")) {
       unsigned v; if (!studioNumber(p,v)||v>255) return failure(r,"400 Bad Request","RGB 0-255");
       if (*key=='r') primary.r=v; else if (*key=='g') primary.g=v; else primary.b=v;
@@ -337,10 +325,10 @@ esp_err_t postPalettes(httpd_req_t *r) {
   const char *p=body;
   if (!take(p,'{')) return failure(r,"400 Bad Request","Object required");
   char key[16];
-  if (!word(p,key,sizeof(key))||!take(p,':')) return failure(r,"400 Bad Request","Missing key");
+  if (!readJsonString(p,key,sizeof(key))||!take(p,':')) return failure(r,"400 Bad Request","Missing key");
   if (!strcmp(key,"selected")) {
     char id[33];
-    if (!word(p,id,sizeof(id))||!take(p,'}')) return failure(r,"400 Bad Request","ID required");
+    if (!readJsonString(p,id,sizeof(id))||!take(p,'}')) return failure(r,"400 Bad Request","ID required");
     if (!ledMutex||xSemaphoreTake(ledMutex,pdMS_TO_TICKS(100))!=pdTRUE)
       return failure(r,"503 Service Unavailable","Busy");
     strncpy(studio.selected,id,sizeof(studio.selected)-1);
@@ -386,7 +374,7 @@ esp_err_t deletePalettes(httpd_req_t *r) {
   if (memchr(body,0,received)) return failure(r,"400 Bad Request","Null byte");
   const char *p=body;
   char id[33];
-  if (!take(p,'{') || !keyword(p,"id") || !take(p,':') || !word(p,id,sizeof(id)) || !take(p,'}'))
+  if (!take(p,'{') || !keyword(p,"id") || !take(p,':') || !readJsonString(p,id,sizeof(id)) || !take(p,'}'))
     return failure(r,"400 Bad Request","Expected {\"id\":\"...\"}");
   if (!ledMutex||xSemaphoreTake(ledMutex,pdMS_TO_TICKS(100))!=pdTRUE)
     return failure(r,"503 Service Unavailable","Busy");
@@ -440,7 +428,7 @@ esp_err_t postHistory(httpd_req_t *r) {
   const char *p=body;
   if (!take(p,'{') || !keyword(p,"action") || !take(p,':')) return failure(r,"400 Bad Request","action required");
   char act[12];
-  if (!word(p,act,sizeof(act))) return failure(r,"400 Bad Request","Invalid action");
+  if (!readJsonString(p,act,sizeof(act))) return failure(r,"400 Bad Request","Invalid action");
   if (!strcmp(act,"clear")) {
     if (!take(p,'}')) return failure(r,"400 Bad Request","Unexpected fields");
     if (!ledMutex||xSemaphoreTake(ledMutex,pdMS_TO_TICKS(100))!=pdTRUE)
@@ -512,9 +500,9 @@ esp_err_t postFavorites(httpd_req_t *r) {
   char name[65]={};
   if (take(p,',')) {
     char key[12];
-    if (!word(p,key,sizeof(key)) || !take(p,':')) return failure(r,"400 Bad Request","Invalid field");
+    if (!readJsonString(p,key,sizeof(key)) || !take(p,':')) return failure(r,"400 Bad Request","Invalid field");
     if (!strcmp(key,"name")) {
-      if (!word(p,name,sizeof(name))) return failure(r,"400 Bad Request","Invalid name");
+      if (!readJsonString(p,name,sizeof(name))) return failure(r,"400 Bad Request","Invalid name");
     } else if (!strcmp(key,"remove")) {
       if (!boolean(p,remove)) return failure(r,"400 Bad Request","Boolean required");
     } else return failure(r,"400 Bad Request","Unknown field");

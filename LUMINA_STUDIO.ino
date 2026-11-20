@@ -364,7 +364,7 @@ esp_err_t getLed(httpd_req_t *r) {
 // Bounded flat JSON: fixed keys, no duplicates, raw ASCII strings, unsigned decimal or boolean.
 void skipSpace(const char *&p) { while (*p && strchr(" \t\r\n",*p)) ++p; }
 bool take(const char *&p,char c) { skipSpace(p); if (*p!=c) return false; ++p; return true; }
-bool word(const char *&p,char *out,size_t cap) {
+bool readJsonString(const char *&p,char *out,size_t cap) {
   if (!take(p,'"')) return false;
   size_t n=0;
   while (*p && *p!='"') {
@@ -387,13 +387,13 @@ bool parseFields(const char *p,Field *fields,unsigned count) {
   unsigned seen=0;
   for(unsigned k=0;k<count;++k) {
     char key[20];
-    if ((k&&!take(p,','))||!word(p,key,sizeof(key))||!take(p,':')) return false;
+    if ((k&&!take(p,','))||!readJsonString(p,key,sizeof(key))||!take(p,':')) return false;
     unsigned i=0; while(i<count && strcmp(key,fields[i].key)) ++i;
     if(i==count||(seen&(1U<<i))) return false;
     seen|=1U<<i;
     auto &f=fields[i];
     if(f.type=='n') { if(!number(p,f.n)) return false; }
-    else if(f.type=='s') { if(!word(p,f.text,sizeof(f.text)))return false; }
+    else if(f.type=='s') { if(!readJsonString(p,f.text,sizeof(f.text)))return false; }
     else {
       skipSpace(p);
       if(!strncmp(p,"true",4)){p+=4;f.n=1;}
