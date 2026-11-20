@@ -1,0 +1,66 @@
+<div id="studio-library" data-view hidden tabindex="-1">
+  <header>
+    <h1>Color library</h1>
+    <p>Save colors from the studio, build palettes, or start with a curated collection.</p>
+    <button type="button" id="library-refresh">Refresh library</button>
+    <p id="library-status" role="status"></p>
+  </header>
+  <section aria-labelledby="library-palettes-heading">
+    <h3 id="library-palettes-heading">Your palettes</h3>
+    <div class="library-actions">
+      <button type="button" id="library-new">New palette</button>
+      <button type="button" id="library-from-current">New palette from current color</button>
+    </div>
+    <form id="library-editor" hidden>
+      <h4 id="library-editor-title">New palette</h4>
+      <label>Name <input name="name" required maxlength="32"></label>
+      <label>Description <input name="description" maxlength="96"></label>
+      <label>Category <input name="category" maxlength="24"></label>
+      <label><input name="favorite" type="checkbox"> Favorite palette</label>
+      <label>Colors (1–12 six-digit hex values, separated by spaces or commas)
+        <textarea name="colors" required rows="3" maxlength="120" spellcheck="false"></textarea>
+      </label>
+      <div class="library-actions">
+        <button type="button" id="library-add-current">Add current color</button>
+        <button type="submit">Save palette</button>
+        <button type="button" id="library-cancel">Cancel</button>
+      </div>
+    </form>
+    <div class="library-grid" id="library-palettes"></div>
+  </section>
+  <details class="fold">
+    <summary>Curated palettes</summary>
+    <div class="library-grid" id="library-curated"></div>
+  </details>
+  <section aria-labelledby="library-favorites-heading">
+    <h3 id="library-favorites-heading">Favorite colors</h3>
+    <form id="library-favorite-form" class="library-actions">
+      <label>Optional color name <input name="name" maxlength="32"></label>
+      <button type="submit">Favorite current color</button>
+    </form>
+    <ul class="library-colors" id="library-favorites"></ul>
+  </section>
+  <section aria-labelledby="library-history-heading">
+    <h3 id="library-history-heading">Recent colors</h3>
+    <button type="button" id="library-clear">Clear history</button>
+    <ul class="library-colors" id="library-history"></ul>
+  </section>
+</div>
+<style>
+  #studio-library > section { margin-block: 1.5rem; }
+  #studio-library .library-actions, #studio-library .library-colors li { display: flex; flex-wrap: wrap; align-items: center; gap: .5rem; }
+  #studio-library button { min-height: 44px; }
+  #studio-library .library-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 15rem), 1fr)); gap: .75rem; margin-top: .75rem; }
+  #studio-library .library-card, #library-editor { padding: .85rem; border: 1px solid var(--border, #556575); border-radius: .5rem; }
+  #studio-library .library-card h4 { margin: 0 0 .35rem; overflow-wrap: anywhere; }
+  #studio-library .library-card p, #studio-library .library-colors span { overflow-wrap: anywhere; }
+  #studio-library .library-card p { margin: .4rem 0; }
+  #studio-library .library-swatches { display: grid; grid-template-columns: repeat(auto-fit, minmax(44px, 1fr)); gap: .2rem; margin: .6rem 0; }
+  #studio-library .library-swatch { border: 1px solid #8796a6; border-radius: .25rem; min-width: 44px; }
+  #studio-library .library-colors { list-style: none; padding: 0; }
+  #studio-library .library-colors li { margin-bottom: .5rem; }
+  #library-editor { margin-block: .75rem; }
+  #library-editor label, #library-favorite-form label { display: block; margin-block: .4rem; }
+  #library-editor input:not([type=checkbox]), #library-editor textarea { display: block; width: min(100%, 28rem); font: inherit; }
+  #library-status { min-height: 1.4em; }
+</style>

@@ -1,0 +1,9 @@
+# WS2812B wiring and first test
+
+Default: ESP32-C3-DevKitM-1 **IO4**, 60 pixels, GRB, brightness cap 64/255. IO4 is also a JTAG signal; do not use it simultaneously for external JTAG. Other boards may route it differently. Check the board schematic before connecting. Change `led_gpio` in `config/build-config.json` and rebuild if needed. The firmware permits GPIO3–7 and GPIO10, subject to the actual board wiring.
+
+With power disconnected, connect IO4 to a **5 V-powered 74AHCT125** input, its corresponding active-low output-enable to ground, and its output through a 330 Ω series resistor to strip **DIN** (not DOUT). Connect controller, shifter and strip grounds together. Power the strip from a suitably rated regulated 5 V supply, not the controller’s 3.3 V pin or the phone. Keep the controller on USB and do not tie separate 5 V sources together. Use short data wiring and fit a 470–1000 µF capacitor rated at least 6.3 V across strip power at the input, observing polarity. Size wiring, distribution and fusing for the strip’s rated worst-case current; a software cap is not electrical protection.
+
+Start with a short strip and set its actual pixel count in the interface. Check First pixel, Red, Green and Blue; if colors are swapped, correct the color order. Then test white briefly and verify power off, Wi-Fi responsiveness, and boot with output off. Diagnostics use a reduced brightness and end after five seconds. **End test** returns to the regular power/color state; use **Power off** to black out normal output. Configuration and color/brightness changes are saved after five quiet seconds; power and tests are never restored on boot.
+
+The UI reports the last RMT frame the controller finished sending. WS2812B provides no feedback: a ready driver or transmitted frame does not confirm strip presence, wiring, or actual light output.

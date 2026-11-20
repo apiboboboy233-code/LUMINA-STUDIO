@@ -1,0 +1,326 @@
+{
+  "effects": [
+    {
+      "id": "solid",
+      "name": "Solid",
+      "category": "Basic",
+      "description": "Fill the strip with the primary color.",
+      "params": []
+    },
+    {
+      "id": "gradient",
+      "name": "Gradient",
+      "category": "Basic",
+      "description": "Render the configured studio gradient.",
+      "params": []
+    },
+    {
+      "id": "meteor",
+      "name": "Meteor",
+      "category": "Motion",
+      "description": "Sweep a bright head with a broken, decaying wake.",
+      "params": [
+        {
+          "id": "period",
+          "name": "Period (ms)",
+          "min": 100,
+          "max": 10000,
+          "default": 1700
+        },
+        {
+          "id": "tail",
+          "name": "Tail (pixels)",
+          "min": 1,
+          "max": 128,
+          "default": 18
+        },
+        {
+          "id": "decay",
+          "name": "Decay (%)",
+          "min": 1,
+          "max": 100,
+          "default": 55
+        }
+      ]
+    },
+    {
+      "id": "breathe",
+      "name": "Breathing",
+      "category": "Basic",
+      "description": "Smoothly fade the primary color in and out.",
+      "params": [
+        {
+          "id": "period",
+          "name": "Period (ms)",
+          "min": 100,
+          "max": 10000,
+          "default": 3000
+        },
+        {
+          "id": "floor",
+          "name": "Minimum level (%)",
+          "min": 0,
+          "max": 90,
+          "default": 5
+        }
+      ]
+    },
+    {
+      "id": "rainbow",
+      "name": "Rainbow",
+      "category": "Color",
+      "description": "Cycle the entire strip through the color wheel.",
+      "params": [
+        {
+          "id": "period",
+          "name": "Period (ms)",
+          "min": 100,
+          "max": 10000,
+          "default": 4000
+        }
+      ]
+    },
+    {
+      "id": "rainbow-cycle",
+      "name": "Rainbow Cycle",
+      "category": "Color",
+      "description": "Scroll a rainbow across the strip.",
+      "params": [
+        {
+          "id": "period",
+          "name": "Period (ms)",
+          "min": 100,
+          "max": 10000,
+          "default": 4000
+        },
+        {
+          "id": "cycles",
+          "name": "Spatial cycles",
+          "min": 1,
+          "max": 8,
+          "default": 1
+        }
+      ]
+    },
+    {
+      "id": "chase",
+      "name": "Chase",
+      "category": "Motion",
+      "description": "Move repeating blocks of primary color on a secondary background.",
+      "params": [
+        {
+          "id": "step",
+          "name": "Step (ms)",
+          "min": 20,
+          "max": 2000,
+          "default": 100
+        },
+        {
+          "id": "spacing",
+          "name": "Spacing (pixels)",
+          "min": 2,
+          "max": 64,
+          "default": 8
+        },
+        {
+          "id": "width",
+          "name": "Width (pixels)",
+          "min": 1,
+          "max": 32,
+          "default": 2
+        }
+      ]
+    },
+    {
+      "id": "comet",
+      "name": "Comet",
+      "category": "Motion",
+      "description": "Sweep a bright head and fading tail around the strip.",
+      "params": [
+        {
+          "id": "period",
+          "name": "Period (ms)",
+          "min": 100,
+          "max": 10000,
+          "default": 2000
+        },
+        {
+          "id": "tail",
+          "name": "Tail (pixels)",
+          "min": 1,
+          "max": 128,
+          "default": 12
+        }
+      ]
+    },
+    {
+      "id": "scanner",
+      "name": "Scanner / Sinelon",
+      "category": "Motion",
+      "description": "Sweep a soft beam back and forth.",
+      "params": [
+        {
+          "id": "period",
+          "name": "Period (ms)",
+          "min": 100,
+          "max": 10000,
+          "default": 2000
+        },
+        {
+          "id": "width",
+          "name": "Beam radius (pixels)",
+          "min": 1,
+          "max": 64,
+          "default": 4
+        }
+      ]
+    },
+    {
+      "id": "color-wipe",
+      "name": "Color Wipe",
+      "category": "Motion",
+      "description": "Wipe alternating colors along the strip.",
+      "params": [
+        {
+          "id": "period",
+          "name": "Period (ms)",
+          "min": 100,
+          "max": 10000,
+          "default": 2400
+        }
+      ]
+    },
+    {
+      "id": "theater-chase",
+      "name": "Theater Chase",
+      "category": "Motion",
+      "description": "March evenly spaced lights over a dark background.",
+      "params": [
+        {
+          "id": "step",
+          "name": "Step (ms)",
+          "min": 20,
+          "max": 2000,
+          "default": 120
+        },
+        {
+          "id": "spacing",
+          "name": "Spacing (pixels)",
+          "min": 2,
+          "max": 16,
+          "default": 3
+        }
+      ]
+    },
+    {
+      "id": "twinkle",
+      "name": "Twinkle",
+      "category": "Texture",
+      "description": "Fade scattered primary stars over the secondary color.",
+      "params": [
+        {
+          "id": "period",
+          "name": "Period (ms)",
+          "min": 100,
+          "max": 10000,
+          "default": 1200
+        },
+        {
+          "id": "density",
+          "name": "Density (%)",
+          "min": 1,
+          "max": 100,
+          "default": 22
+        }
+      ]
+    },
+    {
+      "id": "sparkle",
+      "name": "Sparkle",
+      "category": "Texture",
+      "description": "Flash scattered secondary highlights on the primary color.",
+      "params": [
+        {
+          "id": "step",
+          "name": "Step (ms)",
+          "min": 20,
+          "max": 2000,
+          "default": 90
+        },
+        {
+          "id": "density",
+          "name": "Density (%)",
+          "min": 1,
+          "max": 100,
+          "default": 8
+        }
+      ]
+    },
+    {
+      "id": "fire",
+      "name": "Fire",
+      "category": "Texture",
+      "description": "Flicker from a hot base to darker tips.",
+      "params": [
+        {
+          "id": "step",
+          "name": "Step (ms)",
+          "min": 20,
+          "max": 2000,
+          "default": 70
+        },
+        {
+          "id": "heat",
+          "name": "Heat (%)",
+          "min": 1,
+          "max": 100,
+          "default": 70
+        }
+      ]
+    },
+    {
+      "id": "running-lights",
+      "name": "Running Lights",
+      "category": "Color",
+      "description": "Roll smooth bands between the primary and secondary colors.",
+      "params": [
+        {
+          "id": "period",
+          "name": "Period (ms)",
+          "min": 100,
+          "max": 10000,
+          "default": 2200
+        },
+        {
+          "id": "cycles",
+          "name": "Spatial cycles",
+          "min": 1,
+          "max": 8,
+          "default": 2
+        }
+      ]
+    },
+    {
+      "id": "ocean",
+      "name": "Ocean Wave",
+      "category": "Color",
+      "description": "Blend overlapping teal waves with pale crests.",
+      "params": [
+        {
+          "id": "period",
+          "name": "Period (ms)",
+          "min": 100,
+          "max": 10000,
+          "default": 4500
+        },
+        {
+          "id": "foam",
+          "name": "Foam (%)",
+          "min": 0,
+          "max": 100,
+          "default": 28
+        }
+      ]
+    }
+  ]
+}

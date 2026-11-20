@@ -1,0 +1,60 @@
+<style>
+#studio {--ink:#0c1019;--plate:#141d2b;--rule:#34435c;--soft:#afbed2;--ice:#a8cbff;--signal:#59e1ff;background:var(--ink);border-color:var(--rule);padding:clamp(.85rem,3vw,2rem)}
+#studio h1{font-size:clamp(2rem,6vw,4rem);font-weight:620;letter-spacing:-.065em;line-height:1.02;margin:0 0 .3em}
+#studio h2{font-size:1.2rem;margin:0 0 .75rem;letter-spacing:-.025em}
+#studio button,#studio input,#studio select{border-radius:3px} #studio button{color:var(--ice);padding:.5rem .75rem;background:var(--plate);border-color:var(--rule)} #studio button.ws-primary{background:var(--ice);color:var(--ink);font-weight:700}
+#studio .ws-meta{display:flex;justify-content:space-between;align-items:center;gap:.6rem;flex-wrap:wrap;color:var(--soft);font-size:.86rem} #studio output{color:var(--text);font-family:ui-monospace,monospace}
+.ws-rail{display:flex;align-items:center;gap:clamp(1px,.35vw,5px);height:3.65rem;padding:.65rem clamp(.35rem,1.8vw,1.1rem);margin:.55rem 0 1.5rem;background:repeating-linear-gradient(0deg,#101522 0 2px,#121a26 2px 3px);border:1px solid var(--rule);border-radius:3px}
+.ws-rail i{flex:1;height:58%;min-width:0;border-radius:2px;background:var(--pixel,#273246);box-shadow:inset 0 0 0 1px #ffffff21} .ws-rail i:nth-child(8n){height:80%}
+.ws-grid{display:grid;grid-template-columns:minmax(0,1.35fr) minmax(0,1fr);gap:clamp(.85rem,2.6vw,2rem)}
+.ws-grid>div{min-width:0} .ws-map{position:relative;height:clamp(11rem,35vw,18rem);border:1px solid #ffffff36;border-radius:3px;touch-action:none;cursor:crosshair;background:linear-gradient(to top,#000,transparent),linear-gradient(to right,#fff,var(--hue,#0ff))}
+.ws-cursor{position:absolute;top:var(--y,12%);left:var(--x,65%);width:20px;height:20px;transform:translate(-50%,-50%);border-radius:50%;border:2px solid #fff;box-shadow:0 0 0 1px #000;pointer-events:none}
+#studio .ws-hue{display:block;background:linear-gradient(to right,red,#ff0,#0f0,cyan,blue,#f0f,red);border-radius:4px;height:12px;min-height:12px;margin:.8rem 0;appearance:none;cursor:ew-resize} #studio .ws-hue::-webkit-slider-thumb{appearance:none;width:20px;height:24px;border-radius:3px;background:#fbfcff;border:2px solid #101622} #studio .ws-hue::-moz-range-thumb{width:16px;height:20px;border-radius:3px;background:#fbfcff;border:2px solid #101622}
+.ws-samples{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:.45rem;margin:.65rem 0}.ws-samples button{min-width:0;text-align:left;font-size:.87rem}.ws-samples span{display:block;height:1.6rem;margin-bottom:.35rem;border-radius:2px;background:var(--swatch);border:1px solid #ffffff36}
+#studio label{color:var(--soft);font-size:.85rem} .ws-fields{display:flex;flex-wrap:wrap;align-items:end;gap:.55rem;margin:.65rem 0}.ws-fields label{display:grid;gap:.3rem;min-width:0}.ws-fields input:not([type=checkbox]),.ws-fields select{font:inherit;color:var(--text);min-height:42px;border:1px solid var(--rule);background:var(--plate);padding:.35rem}.ws-fields input[type=number]{width:5.25rem}.ws-fields input[type=text]{width:7.4rem}.ws-fields input[type=color]{width:3.2rem;padding:.2rem}
+.ws-lower{margin-top:1.4rem;padding-top:1.2rem;border-top:1px solid var(--rule)} .ws-gradient{height:2rem;border:1px solid #ffffff36;border-radius:3px;background:#59e1ff}.ws-stops{display:flex;gap:.35rem;flex-wrap:wrap;margin:.55rem 0}.ws-stops button[aria-pressed=true]{outline:1px solid var(--ice);outline-offset:-1px}.ws-stops button span{display:inline-block;width:.8em;height:.8em;margin-right:.3rem;background:var(--swatch);border:1px solid #ffffff55}.ws-transition-preview{height:2rem;background:var(--swatch,var(--signal));border:1px solid #ffffff36;border-radius:3px;margin-top:.5rem}
+#studio .ws-note{min-height:1.3em;margin:.8rem 0 0;font-size:.85rem;color:var(--soft)} #studio .ws-note[data-error=true]{color:#ffb6aa}
+@media(max-width:690px){.ws-grid{grid-template-columns:1fr}.ws-rail{height:3rem}}
+</style>
+<section id="studio" data-view hidden tabindex="-1" aria-labelledby="ws-title">
+  <h1 id="ws-title">Color Studio</h1>
+  <div class="ws-meta"><span id="ws-rail-label">Color preview</span><output id="ws-rail-value">—</output></div>
+  <div class="ws-rail" id="ws-rail" aria-hidden="true"></div>
+  <div class="ws-grid">
+    <div>
+      <h2>Color picker</h2>
+      <div class="ws-map" id="ws-map" tabindex="0" role="group" aria-label="Saturation and value" aria-describedby="ws-map-help"><span class="ws-cursor" aria-hidden="true"></span></div>
+      <label for="ws-hue">Hue <output id="ws-hue-value">—</output></label><input class="ws-hue" id="ws-hue" type="range" min="0" max="359" value="190">
+      <small id="ws-map-help">Drag to mix. Arrow keys adjust saturation and value.</small>
+    </div>
+    <div>
+      <h2>Color channels</h2>
+      <div class="ws-samples"><button id="ws-primary" type="button"><span></span>Primary</button><button id="ws-secondary" type="button"><span></span>Secondary</button><button id="ws-previous" type="button"><span></span>Previous</button></div>
+      <form id="ws-color-form">
+        <div class="ws-fields"><label>Hex<input id="ws-hex" type="text" maxlength="7" spellcheck="false" autocomplete="off" required pattern="#?[0-9A-Fa-f]{6}"></label><label>Native picker<input id="ws-native" type="color" value="#59e1ff"></label></div>
+        <details class="fold"><summary>RGB and HSV</summary>
+        <div class="ws-fields"><label>Red<input id="ws-r" type="number" min="0" max="255" step="1" required></label><label>Green<input id="ws-g" type="number" min="0" max="255" step="1" required></label><label>Blue<input id="ws-b" type="number" min="0" max="255" step="1" required></label></div>
+        <div class="ws-fields"><label>Hue (°)<input id="ws-h" type="number" min="0" max="360" step="any" required></label><label>Saturation (%)<input id="ws-s" type="number" min="0" max="100" step="any" required></label><label>Value (%)<input id="ws-v" type="number" min="0" max="100" step="any" required></label></div>
+        </details>
+        <div class="line"><button class="ws-primary" type="submit">Apply color</button><button id="ws-store-secondary" type="button">Set secondary</button><button id="ws-swap" type="button">Swap colors</button></div>
+      </form>
+    </div>
+  </div>
+  <div class="ws-lower">
+    <details class="fold"><summary>Gradient editor</summary>
+      <div id="ws-gradient" class="ws-gradient" aria-hidden="true"></div>
+      <label for="ws-position">Sample position <output id="ws-position-value">0%</output></label><input id="ws-position" type="range" min="0" max="100" value="0">
+      <div class="ws-stops" id="ws-stops" aria-label="Gradient stops"></div>
+      <div class="ws-fields"><label>Stop color<input id="ws-stop-color" type="color"></label><label>Stop position (%)<input id="ws-stop-position" type="number" min="0" max="100" step="1"></label><label><input id="ws-stop-enabled" type="checkbox"> Stop enabled</label></div>
+      <div class="line"><button id="ws-stop-add" type="button">Add stop</button><button id="ws-stop-remove" type="button">Remove stop</button></div>
+      <div class="ws-fields"><label>Interpolation<select id="ws-interpolation"><option value="rgb">RGB</option><option value="hsv">HSV</option><option value="shortest">Shortest hue path</option><option value="longest">Longest hue path</option></select></label><label>Scale (%)<input id="ws-scale" type="number" min="1" max="200" value="100"></label><label><input id="ws-reverse" type="checkbox"> Reverse</label></div>
+      <button class="ws-primary" id="ws-gradient-apply" type="button">Apply gradient</button>
+    </details>
+    <details class="fold"><summary>Transition</summary>
+      <div class="ws-fields"><label>Style<select id="ws-style"><option value="instant">Instant</option><option value="fade">Fade</option><option value="smooth">Smooth</option><option value="crossfade">Crossfade</option></select></label><label>Duration (ms)<input id="ws-duration" type="number" min="0" max="10000" value="0"></label><label>Curve<select id="ws-curve"><option value="linear">Linear</option><option value="in">Ease in</option><option value="out">Ease out</option><option value="inout">Ease in and out</option></select></label></div>
+      <div class="line"><button id="ws-transition-preview" type="button">Preview transition</button><button class="ws-primary" id="ws-transition-apply" type="button">Save transition</button></div>
+      <div class="ws-transition-preview" id="ws-transition-sample" aria-hidden="true"></div><p>Preview moves from the current output to the selected color without changing the strip.</p>
+    </details>
+  </div>
+  <p class="ws-note" id="ws-note" role="status"></p>
+</section>
